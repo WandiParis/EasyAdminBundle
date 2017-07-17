@@ -1,0 +1,1 @@
+window.onload=function(){if(window.CKEDITOR){var path=((window.location.pathname.indexOf('app_dev.php')!==-1)?'/app_dev.php':'')+'/admin/ckfinder/connector';CKFinder.config({connectorPath:path});for(var ckInstance in CKEDITOR.instances){CKFinder.setupCKEditor(CKEDITOR.instances[ckInstance])}}}

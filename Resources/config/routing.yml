@@ -1,0 +1,18 @@
+easy_admin:
+    resource: "@EasyAdminBundle/Controller/"
+    type:     annotation
+
+wandi_easy_admin_login:
+    path: /login
+    defaults:
+        _controller: WandiEasyAdminBundle:Security:login
+
+wandi_easy_admin_login_check:
+    path: /login_check
+
+wandi_easy_admin_logout:
+    path: /logout
+
+ckfinder_connector:
+    resource: "@CKSourceCKFinderBundle/Resources/config/routing.yml"
+    prefix:   /

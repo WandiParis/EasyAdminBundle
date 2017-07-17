@@ -1,0 +1,17 @@
+{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+
+<form action="{{ path("wandi_easy_admin_login_check") }}" method="post">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="_username" value="{{ lastUsername }}" required="required"/>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="_password" required="required"/>
+
+    <input type="checkbox" id="remember_me" name="_remember_me" value="on"/>
+    <label for="remember_me">Se souvenir de moi</label>
+
+    <input type="submit" id="_submit" name="_submit" value="S'identifier"/>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+</form>

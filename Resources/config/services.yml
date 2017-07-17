@@ -1,0 +1,4 @@
+services:
+    wandi_easy_admin.form_authenticator:
+        class: Wandi\EasyAdminBundle\Security\FormAuthenticator
+        arguments: ['@doctrine.orm.entity_manager', '@security.password_encoder', '@router', '@request_stack', "@security.csrf.token_manager"]
