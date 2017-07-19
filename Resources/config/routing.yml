@@ -1,6 +1,6 @@
-easy_admin:
-    resource: "@EasyAdminBundle/Controller/"
-    type:     annotation
+easy_admin_bundle:
+    resource: "@EasyAdminBundle/Controller/AdminController.php"
+    type: annotation
 
 wandi_easy_admin_login:
     path: /login
@@ -15,4 +15,4 @@ wandi_easy_admin_logout:
 
 ckfinder_connector:
     resource: "@CKSourceCKFinderBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix: /
