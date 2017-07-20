@@ -1,0 +1,6 @@
+login:
+    title: "Admin"
+    username: "Username"
+    password: "Password"
+    remember_me: "Remember me"
+    submit: "Login"
