@@ -87,8 +87,8 @@ security:
 
     access_control:
         # ...
-        - { path: '^admin/login', role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: '^admin/', role: ROLE_EASY_ADMIN }
+        - { path: '^/admin/login', role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: '^/admin/', role: ROLE_EASY_ADMIN }
 ```
 
 **Important**: Make sure that no firewall declared before our, does not match with the prefix we use
