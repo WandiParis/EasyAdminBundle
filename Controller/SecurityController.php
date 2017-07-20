@@ -21,6 +21,7 @@ class SecurityController extends Controller
             [
                 'error' => $error,
                 'lastUsername' => $lastUsername,
+                'easyadminConfig' => $this->getParameter('easyadmin.config'),
             ]
         );
     }
