@@ -3,7 +3,7 @@
 namespace Wandi\EasyAdminBundle\Repository;
 
 /**
- * AdminRepository
+ * AdminRepository.
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {

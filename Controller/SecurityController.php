@@ -7,7 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class SecurityController extends Controller
 {
     /**
-     * Login action
+     * Login action.
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function loginAction()

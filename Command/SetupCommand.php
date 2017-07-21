@@ -3,13 +3,10 @@
 namespace Wandi\EasyAdminBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
-use Wandi\EasyAdminBundle\Entity\User;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 class SetupCommand extends ContainerAwareCommand
@@ -38,12 +35,11 @@ class SetupCommand extends ContainerAwareCommand
             ],
         ];
 
-        foreach ($commands as $c){
+        foreach ($commands as $c) {
             $commandName = $c['name'];
             $command = $this->getApplication()->find($commandName);
 
             try {
-
                 $output
                     ->writeln(
                         [
@@ -56,7 +52,7 @@ class SetupCommand extends ContainerAwareCommand
                         ]
                     );
 
-                $returnCode = $command->run(
+                $command->run(
                     new ArrayInput(
                         [
                             'command' => $commandName,
@@ -65,7 +61,7 @@ class SetupCommand extends ContainerAwareCommand
                     $output
                 );
             } catch (IOException $e) {
-            } catch (\InvalidArgumentException $e){
+            } catch (\InvalidArgumentException $e) {
             }
         }
     }

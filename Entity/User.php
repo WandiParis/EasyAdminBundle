@@ -7,7 +7,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Admin
+ * Admin.
  *
  * @ORM\Table(name="wandi_easy_admin_user")
  * @ORM\Entity(repositoryClass="Wandi\EasyAdminBundle\Repository\UserRepository")
@@ -81,6 +81,7 @@ class User implements UserInterface
 
     /**
      * @param $username
+     *
      * @return $this
      */
     public function setUsername($username)
@@ -100,6 +101,7 @@ class User implements UserInterface
 
     /**
      * @param $password
+     *
      * @return $this
      */
     public function setPassword($password)
@@ -109,9 +111,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return null
-     */
     public function getSalt()
     {
         return null;
@@ -130,6 +129,7 @@ class User implements UserInterface
 
     /**
      * @param $role
+     *
      * @return bool
      */
     public function hasRole($role)
@@ -139,6 +139,7 @@ class User implements UserInterface
 
     /**
      * @param $role
+     *
      * @return $this
      */
     public function addRole($role)
@@ -156,6 +157,7 @@ class User implements UserInterface
 
     /**
      * @param $role
+     *
      * @return $this
      */
     public function removeRole($role)
@@ -168,9 +170,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     *
-     */
     public function eraseCredentials()
     {
     }
@@ -185,13 +184,13 @@ class User implements UserInterface
 
     /**
      * @param $boolean
+     *
      * @return $this
      */
     public function setEnabled($boolean)
     {
-        $this->enabled = (bool)$boolean;
+        $this->enabled = (bool) $boolean;
 
         return $this;
     }
 }
-

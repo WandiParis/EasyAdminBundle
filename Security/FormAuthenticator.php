@@ -34,10 +34,10 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     /**
      * FormAuthenticator constructor.
      *
-     * @param EntityManager $em
+     * @param EntityManager       $em
      * @param UserPasswordEncoder $encoder
-     * @param Router $router
-     * @param RequestStack $request
+     * @param Router              $router
+     * @param RequestStack        $request
      */
     public function __construct(
         EntityManager $em,
@@ -76,7 +76,7 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     }
 
     /**
-     * @param mixed $credentials
+     * @param mixed                 $credentials
      * @param UserProviderInterface $userProvider
      *
      * @return null|User
@@ -92,7 +92,7 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     }
 
     /**
-     * @param mixed $credentials
+     * @param mixed         $credentials
      * @param UserInterface $user
      *
      * @return bool

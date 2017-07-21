@@ -8,6 +8,6 @@ class CKFinderAuthentication extends AuthenticationBase
 {
     public function authenticate()
     {
-        return !!$this->container->get('security.token_storage')->getToken()->getUser();
+        return (bool) $this->container->get('security.token_storage')->getToken()->getUser();
     }
 }
