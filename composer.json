@@ -21,7 +21,7 @@
         "php": ">=5.5.0",
         "javiereguiluz/easyadmin-bundle": "^1.16",
         "vich/uploader-bundle": "^1.4",
-        "egeloen/ckeditor-bundle": "^6.0",
+        "egeloen/ckeditor-bundle": "^5.0",
         "ckfinder/ckfinder-symfony3-bundle": "^3.4"
     },
     "require-dev": {
