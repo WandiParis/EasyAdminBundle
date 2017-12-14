@@ -2,7 +2,6 @@
 
 namespace Wandi\EasyAdminBundle\Generator;
 
-use Wandi\EasyAdminBundle\Exception\EAException;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -41,6 +40,10 @@ use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\Date;
 use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
+use Wandi\EasyAdminBundle\Generator\Exception\EAException;
+use Wandi\EasyAdminBundle\Generator\Type\DoctrineType;
+use Wandi\EasyAdminBundle\Generator\Type\EasyAdminGeneratorType;
+use Wandi\EasyAdminBundle\Generator\Type\EasyAdminType;
 
 class ConfigurationTypes
 {
@@ -328,8 +331,7 @@ class ConfigurationTypes
         EasyAdminGeneratorType::IMAGE =>  [
             'function' => 'handleImage',
             'methods' => [
-                'list',
-                'show',
+
             ]
         ],
         EasyAdminGeneratorType::DECIMAL =>  [
@@ -460,7 +462,7 @@ class ConfigurationTypes
     /**
      * @return mixed
      */
-    public static function getTypeHelpers()
+    public static function getTypeHelpers(): array
     {
         return self::$typeHelpers;
     }
@@ -468,12 +470,12 @@ class ConfigurationTypes
     /**
      * @return mixed
      */
-    public static function getClassHelpers()
+    public static function getClassHelpers(): array
     {
         return self::$classHelpers;
     }
 
-    public static function setClassHelpers($helpers)
+    public static function setClassHelpers(array $helpers)
     {
         self::$classHelpers = $helpers;
     }
@@ -481,7 +483,7 @@ class ConfigurationTypes
     /**
      * @return mixed
      */
-    public static function getMaskHelper()
+    public static function getMaskHelper(): array
     {
         return self::$helperMask;
     }
@@ -489,7 +491,7 @@ class ConfigurationTypes
     /**
      * Trie les types par ordre de priorité
      */
-    public static function getTypesOrderedByPriorities()
+    public static function getTypesOrderedByPriorities(): void
     {
         uasort(self::$generatorTypesConfiguration, function(array $a, array $b)
         {
@@ -550,7 +552,7 @@ class ConfigurationTypes
      * @param $classTargeted
      * @return null
      */
-    public static function getClassFromArray($arrayClasses, $classTargeted)
+    public static function getClassFromArray(array $arrayClasses, string $classTargeted)
     {
         $class = array_filter($arrayClasses, function($class) use ($classTargeted){
             return ($class instanceof $classTargeted);
@@ -565,7 +567,7 @@ class ConfigurationTypes
      * @param $classTargeted
      * @return bool
      */
-    public static function hasClass($propertyClasses, $classTargeted): bool
+    public static function hasClass(array $propertyClasses, string $classTargeted): bool
     {
         return self::getClassFromArray($propertyClasses, $classTargeted) != null;
     }
@@ -576,7 +578,7 @@ class ConfigurationTypes
      * @param $doctrineTargetType
      * @return bool
      */
-    private static function hasDoctrineColumnType($propertyDoctrineClasses, $doctrineTargetType): bool
+    private static function hasDoctrineColumnType(array $propertyDoctrineClasses, string $doctrineTargetType): bool
     {
         $column = self::getClassFromArray($propertyDoctrineClasses, Column::class);
 
@@ -640,7 +642,7 @@ class ConfigurationTypes
     /**
      * @param mixed $typeHelpers
      */
-    public static function setTypeHelpers($typeHelpers)
+    public static function setTypeHelpers(array $typeHelpers): void
     {
         self::$typeHelpers = $typeHelpers;
     }

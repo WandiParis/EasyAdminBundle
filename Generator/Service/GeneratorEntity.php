@@ -2,7 +2,9 @@
 
 namespace Wandi\EasyAdminBundle\Generator\Service;
 
-use Wandi\EasyAdminBundle\Exception\EAException;
+use Wandi\EasyAdminBundle\Generator\EATool;
+use Wandi\EasyAdminBundle\Generator\Entity;
+use Wandi\EasyAdminBundle\Generator\Exception\EAException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -45,7 +47,7 @@ class GeneratorEntity
      * @param $entityFullName
      * @throws EAException
      */
-    public function run($entityFullName): void
+    public function run(string $entityFullName): void
     {
         $entitySplit = explode(':', $entityFullName);
         if (empty($entitySplit) || in_array($entityFullName, $entitySplit) || count($entitySplit) != 2)
@@ -57,6 +59,7 @@ class GeneratorEntity
         /** @var ClassMetadata $metaData */
         $entityMetaData = $this->em->getClassMetadata($bundleName . '\Entity\\' . $entityName);
         $relatedEntitiesName = $this->getRelatedEntitiesName($entityMetaData);
+        $bundles = $this->container->getParameter('kernel.bundles');
 
         $eaTool = new EATool();
         $eaTool->setParameters($this->eaToolParams);
@@ -65,7 +68,7 @@ class GeneratorEntity
         $eaTool->initTranslation($this->eaToolParams['translation_domain'], $this->projectDir);
 
         $entity = new Entity($entityMetaData);
-        $entity->setName(Entity::buildName($entityMetaData));
+        $entity->setName(Entity::buildName($entityMetaData, $bundles));
         $entity->setClass($entityMetaData->getName());
         $entity->buildMethods($this->eaToolParams);
         $eaTool->addEntity($entity);

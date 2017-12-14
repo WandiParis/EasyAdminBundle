@@ -2,7 +2,9 @@
 
 namespace Wandi\EasyAdminBundle\Generator\Service;
 
-use Wandi\EasyAdminBundle\Exception\EAException;
+use Wandi\EasyAdminBundle\Generator\EATool;
+use Wandi\EasyAdminBundle\Generator\Entity;
+use Wandi\EasyAdminBundle\Generator\Exception\EAException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Yaml\Yaml;
@@ -13,19 +15,22 @@ class GeneratorClean
     private $em;
     private $projectDir;
     private $consoleOutput;
+    private $bundles;
 
     /**
      * GeneratorClean constructor.
      * @param EntityManager $entityManager
      * @param $eaToolParams
      * @param $projectDir
+     * @param $bundles
      */
-    public function __construct(EntityManager $entityManager, $eaToolParams, $projectDir)
+    public function __construct(EntityManager $entityManager, $eaToolParams, $projectDir, $bundles)
     {
         $this->em = $entityManager;
         $this->eaToolParams = $eaToolParams;
         $this->projectDir = $projectDir;
         $this->consoleOutput = new ConsoleOutput();
+        $this->bundles = $bundles;
     }
 
     /**
@@ -47,11 +52,7 @@ class GeneratorClean
             throw new EAException('There are no imported files.');
 
         $entitiesName['easyAdmin'] = $this->getNameListEntities($fileContent['imports']);
-        $entitiesName['metaData'] = $this->getEntitiesNameFromMetaDataList($metaDataList);
-
-        //unset a retirer (test)
-        unset($entitiesName['metaData'][0]);
-        unset($entitiesName['metaData'][1]);
+        $entitiesName['metaData'] = $this->getEntitiesNameFromMetaDataList($metaDataList, $this->bundles);
         $entitiesToDelete = $this->getEntitiesToDelete($entitiesName);
 
         if (empty($entitiesToDelete))
@@ -89,14 +90,16 @@ class GeneratorClean
     }
 
     /**
-     * @param $metaDataList
-     * @return array
      * Retourne un tableau contenant les noms des entités
+     * @param array $metaDataList
+     * @param array $bundles
+     * @return array
      */
-    private function getEntitiesNameFromMetaDataList($metaDataList): array
+    private function getEntitiesNameFromMetaDataList(array $metaDataList, array $bundles): array
     {
-        $entitiesName = array_map(function($metaData){
-            return Entity::buildName($metaData);
+        $entitiesName = array_map(function($metaData) use ($bundles){
+            $nameData = Entity::buildNameData($metaData, $bundles);
+            return Entity::buildName($nameData);
         }, $metaDataList);
         return $entitiesName;
     }
@@ -106,7 +109,7 @@ class GeneratorClean
      * @return array
      * Retourne la liste des entités à supprimer
      */
-    private function getEntitiesToDelete($entities): array
+    private function getEntitiesToDelete(array $entities): array
     {
         $entitiesToDelete = [];
 
@@ -123,7 +126,7 @@ class GeneratorClean
      * @param $entities
      * @throws EAException
      */
-    private function purgeImportedFiles($entities): void
+    private function purgeImportedFiles(array $entities): void
     {
         $fileBaseContent = Yaml::parse(file_get_contents($this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '.yml'));
 
@@ -147,7 +150,7 @@ class GeneratorClean
      * @param $entities
      * @throws EAException
      */
-    private function purgeEasyAdminMenu($entities): void
+    private function purgeEasyAdminMenu(array $entities): void
     {
         $fileMenuContent = Yaml::parse(file_get_contents($this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '_menu.yml'));
 
@@ -171,7 +174,7 @@ class GeneratorClean
      * @param $entities
      * @throws EAException
      */
-    private function purgeEntityFiles($entities): void
+    private function purgeEntityFiles(array $entities): void
     {
         foreach ($entities['name'] as $entityName)
         {

@@ -11,12 +11,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class GeneratorCommand extends ContainerAwareCommand
+class GeneratorGenerateCommand extends ContainerAwareCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('toto')
+            ->setName('wandi:easy-admin:generator:generate')
             ->setDescription('Create easy admin config files')
             ->setDefinition(
                 new InputDefinition(array(
@@ -32,7 +32,7 @@ class GeneratorCommand extends ContainerAwareCommand
      * @return int|null|void
      * @throws \Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $container = $this->getContainer();
         $dirProject = $container->getParameter('kernel.project_dir');
@@ -40,7 +40,7 @@ class GeneratorCommand extends ContainerAwareCommand
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('A easy admin config file, <info>already exist</info>, do you want to <info>override</info> it [<info>y</info>/n]?', true);
 
-        $cleanCommand = $this->getApplication()->find('ea:clean');
+        $cleanCommand = $this->getApplication()->find('wandi:easy-admin:generator:cleanup');
         $greetInput = new ArrayInput([]);
 
         if (!$input->getOption('force')) {
@@ -59,7 +59,7 @@ class GeneratorCommand extends ContainerAwareCommand
             $cleanCommand->run($greetInput, $output);
 
         try {
-            $eaTool = $container->get('ea.main');
+            $eaTool = $container->get('wandi_easy_admin.generator.generate');
             $eaTool->run();
         } catch (EAException $e) {
             $output->writeln('<error>(EAException catché)' . $e->getMessage() . '</error>');

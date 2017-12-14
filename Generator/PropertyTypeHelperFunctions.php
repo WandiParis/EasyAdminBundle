@@ -2,11 +2,12 @@
 
 namespace Wandi\EasyAdminBundle\Generator;
 
-use Wandi\EasyAdminBundle\Exception\EAException;
 use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Translation\Translator;
 use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 use Doctrine\ORM\Mapping\Column;
+use Wandi\EasyAdminBundle\Generator\Exception\EAException;
+
 
 
 class PropertyTypeHelperFunctions
@@ -20,7 +21,7 @@ class PropertyTypeHelperFunctions
      * @param Method $method
      * @throws EAException
      */
-    public static function handleImage(array $propertyConfig, Field $field, Method $method)
+    public static function handleImage(array $propertyConfig, Field $field, Method $method): void
     {
         /** @var UploadableField $uploadableField */
         $uploadableField = ConfigurationTypes::getClassFromArray( $propertyConfig['annotationClasses'], UploadableField::class);
@@ -53,7 +54,7 @@ class PropertyTypeHelperFunctions
      * @param Field $field
      * @param Method $method
      */
-    public function handleDecimal(array $propertyConfig, Field $field, Method $method)
+    public static function handleDecimal(array $propertyConfig, Field $field, Method $method): void
     {
         /** @var Column $column */
         $column = ConfigurationTypes::getClassFromArray($propertyConfig['annotationClasses'], Column::class);
@@ -86,7 +87,7 @@ class PropertyTypeHelperFunctions
      * @param Field $field
      * @param Method $method
      */
-    public static function handleAutoComplete(array $propertyConfig, Field $field, Method $method)
+    public static function handleAutoComplete(array $propertyConfig, Field $field, Method $method): void
     {
         //Si OneToMany et method list on set le name à null pour pas l'afficher
         if ($method->getName() == 'list' && ConfigurationTypes::getClassFromArray($propertyConfig['annotationClasses'], OneToMany::class))
@@ -110,7 +111,7 @@ class PropertyTypeHelperFunctions
      * @param Field $field
      * @param Method $method
      */
-    public static function handleDatetimetz(array $propertyConfig, Field $field, Method $method)
+    public static function handleDatetimetz(array $propertyConfig, Field $field, Method $method): void
     {
         if (in_array($method->getName(), ['list', 'show']))
         {

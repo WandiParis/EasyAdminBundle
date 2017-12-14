@@ -17,7 +17,7 @@ class Action
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -26,7 +26,7 @@ class Action
      * @param mixed $name
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): Action
     {
         $this->name = $name;
         return $this;
@@ -35,7 +35,7 @@ class Action
     /**
      * @return mixed
      */
-    public function getIcon()
+    public function getIcon(): string
     {
         return $this->icon;
     }
@@ -44,7 +44,7 @@ class Action
      * @param mixed $icon
      * @return $this
      */
-    public function setIcon($icon)
+    public function setIcon(string $icon): Action
     {
         $this->icon = $icon;
         return $this;
@@ -53,7 +53,7 @@ class Action
     /**
      * @return mixed
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -62,7 +62,7 @@ class Action
      * @param mixed $label
      * @return $this
      */
-    public function setLabel($label)
+    public function setLabel(string $label): Action
     {
         $this->label = $label;
         return $this;
@@ -82,7 +82,11 @@ class Action
      */
     public function getStructure() : array
     {
-        return ['name' => $this->name, 'label' => $this->label, 'icon' => $this->icon ];
+        return [
+            'name' => $this->name,
+            'label' => $this->label,
+            'icon' => $this->icon
+        ];
     }
 
 }

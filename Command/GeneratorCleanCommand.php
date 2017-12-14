@@ -2,7 +2,7 @@
 
 namespace Wandi\EasyAdminBundle\Command;
 
-use AppBundle\Exception\EAException;
+use Wandi\EasyAdminBundle\Generator\Exception\EAException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,7 +36,7 @@ class GeneratorCleanCommand extends ContainerAwareCommand
         }
 
         try {
-            $eaTool = $container->get('ea.clean');
+            $eaTool = $container->get('wandi_easy_admin.generator.clean');
             $eaTool->run();
         } catch (EAException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');

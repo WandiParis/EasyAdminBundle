@@ -2,7 +2,6 @@
 
 namespace Wandi\EasyAdminBundle\Generator\Type;
 
-
 class EasyAdminType
 {
     const   EMAIL = 'email';

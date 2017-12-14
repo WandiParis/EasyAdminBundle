@@ -1,8 +1,8 @@
 <?php
 
-namespace Wandi\EasyAdminBundle\Generator\Service;
+namespace Wandi\EasyAdminBundle\Generator;
 
-use Wandi\EasyAdminBundle\Exception\EAException;
+use Wandi\EasyAdminBundle\Generator\Exception\EAException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Yaml\Dumper;
@@ -26,25 +26,25 @@ class EATool
     }
 
     /**
-     * @return null
+     * @return null|Translator
      */
-    public static function getTranslation()
+    public static function getTranslation(): ?Translator
     {
         return self::$translation;
     }
 
     /**
-     * @return null
+     * @return array|null
      */
-    public static function getParameterBag()
+    public static function getParameterBag(): ?array
     {
         return self::$parameterBag;
     }
 
     /**
-     * @param null $parameterBag
+     * @param array $parameterBag
      */
-    public static function setParameterBag($parameterBag)
+    public static function setParameterBag(array $parameterBag): void
     {
         self::$parameterBag = $parameterBag;
     }
@@ -52,7 +52,7 @@ class EATool
     /**
      * @return ArrayCollection
      */
-    public function getEntities()
+    public function getEntities(): ArrayCollection
     {
         return $this->entities;
     }
@@ -61,7 +61,7 @@ class EATool
      * @param ArrayCollection $entities
      * @return $this
      */
-    public function setEntities(ArrayCollection $entities)
+    public function setEntities(ArrayCollection $entities): AETool
     {
         $this->entities = $entities;
         return $this;
@@ -71,7 +71,7 @@ class EATool
      * @param Entity $entity
      * @return $this
      */
-    public function addEntity(Entity $entity)
+    public function addEntity(Entity $entity): EATool
     {
         $this->entities[] = $entity;
         return $this;
@@ -89,7 +89,7 @@ class EATool
      * @param array $parameters
      * @return $this
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): EATool
     {
         $this->parameters = $parameters;
         return $this;
@@ -119,13 +119,13 @@ class EATool
      * @param $fileName
      * @param $projectDir
      */
-    public function initTranslation($fileName, $projectDir): void
+    public function initTranslation(string $fileName, string $projectDir): void
     {
         if (self::$translation === null)
         {
             self::$translation = new Translator('fr_FR');
             self::$translation->addLoader('yaml', new YamlFileLoader());
-            self::$translation->addResource('yaml', $projectDir."/app/Resources/translations/".$fileName.".fr.yml", 'fr_FR');
+            self::$translation->addResource('yaml', $projectDir."/vendor/Wandi/easy-admin-bundle/Resources/translations/".$fileName.".fr.yml", 'fr_FR');
         }
     }
 
@@ -149,7 +149,7 @@ class EATool
      * @param ConsoleOutput $consoleOutput
      * @throws EAException
      */
-    public function generateMenuFile($projectDir, ConsoleOutput $consoleOutput): void
+    public function generateMenuFile(string $projectDir, ConsoleOutput $consoleOutput): void
     {
         $ymlContent = self::buildDumpPhpToYml($this->getMenuStructure(), $this->parameters);
         $path =  '/app/config/easyadmin/' . $this->parameters['pattern_file'] . '_menu.yml';
@@ -164,7 +164,7 @@ class EATool
      * @param ConsoleOutput $consoleOutput
      * @throws EAException
      */
-    public function generateEntityFiles($projectDir, ConsoleOutput $consoleOutput): void
+    public function generateEntityFiles(string $projectDir, ConsoleOutput $consoleOutput): void
     {
         foreach($this->getEntities()->getIterator()  as $entity)
         {
@@ -200,7 +200,7 @@ class EATool
             'easy_admin' => [
                 'translation_domain' => $this->parameters['translation_domain'],
                 'formats' => [
-                    'datetime' => 'd/m/Y à H\hi e',
+                    'datetime' => 'd/m/Y à H\hi',
                     'date' => 'd/m/Y',
                     'time' => 'H\hi e'
                 ],
@@ -222,7 +222,7 @@ class EATool
      * @param ConsoleOutput $consoleOutput
      * @throws EAException
      */
-    public function generateBaseFile($projectDir, ConsoleOutput $consoleOutput): void
+    public function generateBaseFile(string $projectDir, ConsoleOutput $consoleOutput): void
     {
         $ymlContent = self::buildDumpPhpToYml($this->getBaseFileStructure(), $this->parameters);
         $path = '/app/config/easyadmin/' . $this->parameters['pattern_file'] . '.yml';
@@ -248,7 +248,7 @@ class EATool
         return $yml;
     }
 
-    public static function buildEntryMenu($nameEntity)
+    public static function buildEntryMenu(string $nameEntity)
     {
         return [
             'entity' => $nameEntity,

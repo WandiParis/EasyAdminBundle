@@ -28,7 +28,7 @@ class Method
     /**
      * @return mixed
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -37,7 +37,7 @@ class Method
      * @param $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): Method
     {
         $this->title = $title;
         return $this;
@@ -45,9 +45,10 @@ class Method
 
     /**
      * Construit le titre de la méthode avec le nom de l'entité (on retire le préfix)
-     * @param $entityName
+     * @param string $entityName
+     * @return string
      */
-    public function buildTitle($entityName)
+    public function buildTitle(string $entityName): void
     {
         /** @var  Translator $translator */
         $translator = EATool::getTranslation();
@@ -62,13 +63,13 @@ class Method
             $title = implode(" ", $splitName);
         }
 
-        $this->title = $translator->trans('ea_tool.method.title.' . $this->name, ['%entity%' => $title]);
+        $this->title = $translator->trans('generator.method.title.' . $this->name, ['%entity%' => $title]);
     }
 
     /**
      * @return mixed
      */
-    public function getActions()
+    public function getActions(): ArrayCollection
     {
         return $this->actions;
     }
@@ -77,7 +78,7 @@ class Method
      * @param mixed $actions
      * @return $this
      */
-    public function setActions(ArrayCollection $actions)
+    public function setActions(ArrayCollection $actions): Method
     {
         $this->actions = $actions;
         return $this;
@@ -87,7 +88,7 @@ class Method
      * @param Action $action
      * @return $this
      */
-    public function addAction(Action $action)
+    public function addAction(Action $action): Method
     {
         $this->actions[] = $action;
         return $this;
@@ -96,7 +97,7 @@ class Method
     /**
      * @return mixed
      */
-    public function getFields()
+    public function getFields(): ArrayCollection
     {
         return $this->fields;
     }
@@ -105,7 +106,7 @@ class Method
      * @param mixed $fields
      * @return $this
      */
-    public function setFields(ArrayCollection $fields)
+    public function setFields(ArrayCollection $fields): Method
     {
         $this->fields = $fields;
         return $this;
@@ -115,7 +116,7 @@ class Method
      * @param Field $field
      * @return $this
      */
-    public function addField(Field $field)
+    public function addField(Field $field): Method
     {
         $this->fields[] = $field;
         return $this;
@@ -124,7 +125,7 @@ class Method
     /**
      * @return mixed
      */
-    public function getSort()
+    public function getSort(): array
     {
         return $this->sort;
     }
@@ -133,7 +134,7 @@ class Method
      * @param mixed $sort
      * @return $this
      */
-    public function setSort($sort)
+    public function setSort(array $sort): Method
     {
         $this->sort = $sort;
         return $this;
@@ -142,7 +143,7 @@ class Method
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -151,7 +152,7 @@ class Method
      * @param mixed $name
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): Method
     {
         $this->name = $name;
         return $this;
@@ -163,14 +164,11 @@ class Method
      */
     public function buildSort(array $eaToolParams) : void
     {
-
         if (!in_array($this->name, $eaToolParams['sort']['methods']))
         {
             $this->sort = [];
             return;
         }
-
-
 
         foreach ($eaToolParams['sort']['properties'] as $sort)
         {
@@ -188,10 +186,10 @@ class Method
     }
 
     /**
-     * @param $eaToolParams
+     * @param array $eaToolParams
      * @return array
      */
-    public function getStructure($eaToolParams) : array
+    public function getStructure(array $eaToolParams) : array
     {
         $actionsStructure = [];
         $fieldsStructure = [];
@@ -207,7 +205,6 @@ class Method
             $fieldsStructure[] = $field->getStructure();
         }
 
-
         $structure = [
             $this->name => array_merge([
                 'title' => $this->title,
@@ -218,5 +215,4 @@ class Method
 
         return $structure;
     }
-
 }

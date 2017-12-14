@@ -29,7 +29,7 @@ class Field
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -38,7 +38,7 @@ class Field
      * @param mixed $name
      * @return $this
      */
-    public function setName($name)
+    public function setName($name): Field
     {
         $this->name = $name;
         return $this;
@@ -47,7 +47,7 @@ class Field
     /**
      * @return mixed
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -56,21 +56,16 @@ class Field
      * @param mixed $type
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): Field
     {
         $this->type = $type;
         return $this;
     }
 
-    public function buildType()
-    {
-
-    }
-
     /**
      * @return mixed
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -79,7 +74,7 @@ class Field
      * @param mixed $label
      * @return $this
      */
-    public function setLabel($label)
+    public function setLabel($label): Field
     {
         $this->label = $label;
         return $this;
@@ -104,7 +99,7 @@ class Field
      * Supprime Tous les sous tableaux qui sont vides
      * Link: https://stackoverflow.com/a/46781625/7285018
      */
-    public static function removeEmptyValuesAndSubArrays($array)
+    public static function removeEmptyValuesAndSubArrays(array $array): array
     {
         foreach($array as $k => &$v)
         {
@@ -124,7 +119,7 @@ class Field
     /**
      * @return array
      */
-    public function getTypeOptions()
+    public function getTypeOptions(): ?array
     {
         return $this->typeOptions;
     }
@@ -133,7 +128,7 @@ class Field
      * @param array $typeOptions
      * @return $this
      */
-    public function setTypeOptions(array $typeOptions)
+    public function setTypeOptions(array $typeOptions): Field
     {
         $this->typeOptions = $typeOptions;
         return $this;
@@ -142,7 +137,7 @@ class Field
     /**
      * @return mixed
      */
-    public function getHelp()
+    public function getHelp(): string
     {
         return $this->help;
     }
@@ -151,7 +146,7 @@ class Field
      * @param mixed $help
      * @return $this
      */
-    public function setHelp($help)
+    public function setHelp(string $help): Field
     {
         $this->help = $help;
         return $this;
@@ -160,7 +155,7 @@ class Field
     /**
      * @return mixed
      */
-    public function getBasePath()
+    public function getBasePath(): string
     {
         return $this->basePath;
     }
@@ -169,7 +164,7 @@ class Field
      * @param mixed $basePath
      * @return $this
      */
-    public function setBasePath($basePath)
+    public function setBasePath(string $basePath): Field
     {
         $this->basePath = $basePath;
         return $this;
@@ -178,7 +173,7 @@ class Field
     /**
      * @return mixed
      */
-    public function getForcedType()
+    public function getForcedType(): string
     {
         return $this->forcedType;
     }
@@ -187,7 +182,7 @@ class Field
      * @param mixed $forcedType
      * @return $this
      */
-    public function setForcedType($forcedType)
+    public function setForcedType(string $forcedType): Field
     {
         $this->forcedType = $forcedType;
         return $this;
@@ -197,7 +192,7 @@ class Field
      * @param array $propertyConfig
      * @param Method $method
      */
-    public function buildFieldConfig(array $propertyConfig, Method $method)
+    public function buildFieldConfig(array $propertyConfig, Method $method): void
     {
         $this->name = $propertyConfig['name'];
         $this->type = $propertyConfig['typeConfig']['easyAdminType'];
@@ -213,7 +208,7 @@ class Field
      * @param array $propertyConfig
      * @param Method $method
      */
-    private function buildFieldTypeHelpers(array $propertyConfig, Method $method)
+    private function buildFieldTypeHelpers(array $propertyConfig, Method $method): void
     {
         $helpers = ConfigurationTypes::getTypeHelpers();
 
@@ -233,7 +228,7 @@ class Field
      * @param Entity $entity
      * @param method $method
      */
-    private function buildFieldClassHelpers(array $propertyConfig, Entity $entity, method $method)
+    private function buildFieldClassHelpers(array $propertyConfig, Entity $entity, method $method): void
     {
         $helpers = ConfigurationTypes::getClassHelpers();
 
@@ -254,7 +249,7 @@ class Field
      * @param Entity $entity
      * @param Method $method
      */
-    public function buildFieldHelpers(array $propertyConfig, Entity $entity, Method $method)
+    public function buildFieldHelpers(array $propertyConfig, Entity $entity, Method $method): void
     {
         //Helpers par rapport aux classes possédés
         $this->buildFieldClassHelpers($propertyConfig, $entity, $method);
@@ -266,7 +261,7 @@ class Field
     /**
      * @return mixed
      */
-    public function getFormat()
+    public function getFormat(): string
     {
         return $this->format;
     }
@@ -275,7 +270,7 @@ class Field
      * @param mixed $format
      * @return $this
      */
-    public function setFormat($format)
+    public function setFormat($format): Field
     {
         $this->format = $format;
         return $this;
