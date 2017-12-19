@@ -2,142 +2,128 @@
 
 namespace Wandi\EasyAdminBundle\Generator\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Console\Command\Command;
 use Wandi\EasyAdminBundle\Generator\EATool;
 use Wandi\EasyAdminBundle\Generator\Entity;
 use Wandi\EasyAdminBundle\Generator\Exception\EAException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
+use Wandi\EasyAdminBundle\Generator\GeneratorConfigInterface;
 
-class GeneratorEntity
+class GeneratorEntity  extends GeneratorBase implements GeneratorConfigInterface
 {
-    private $eaToolParams;
-    private $em;
-    private $projectDir;
-    private $container;
     private $consoleOutput;
-    private $command;
 
-    /**
-     * GeneratorEntity constructor.
-     * @param EntityManager $entityManager
-     * @param $eaToolParams
-     * @param $projectDir
-     * @param ContainerInterface $container
-     * @param ContainerAwareCommand $entityCommand
-     */
-    public function __construct(EntityManager $entityManager, $eaToolParams, $projectDir, ContainerInterface $container, ContainerAwareCommand $entityCommand)
+    public function buildServiceConfig()
     {
-        $this->em = $entityManager;
-        $this->eaToolParams = $eaToolParams;
-        $this->projectDir = $projectDir;
-        $this->container = $container;
-        $this->command = $entityCommand;
         $this->consoleOutput = new ConsoleOutput();
     }
 
     /**
-     * TODO: Ajouter la gestion des préfix (AppBundle:Image)
      * TODO: Factoriser les fonctions generateFileEntity avec Eatool class
-     * @param $entityFullName
+     * @param array $entitiesMetaData
+     * @param Command $command
      * @throws EAException
      */
-    public function run(string $entityFullName): void
+    public function run(array $entitiesMetaData, Command $command): void
     {
-        $entitySplit = explode(':', $entityFullName);
-        if (empty($entitySplit) || in_array($entityFullName, $entitySplit) || count($entitySplit) != 2)
-        {
-            throw new EAException('You have to enter a valid entity name prefixed by the name of the bundle to which it belongs (ex: AppBundle:Image)');
-        }
-        $bundleName = $entitySplit[0];
-        $entityName = $entitySplit[1];
-        /** @var ClassMetadata $metaData */
-        $entityMetaData = $this->em->getClassMetadata($bundleName . '\Entity\\' . $entityName);
-        $relatedEntitiesName = $this->getRelatedEntitiesName($entityMetaData);
         $bundles = $this->container->getParameter('kernel.bundles');
+        $relatedEntities = $this->getRelatedEntitiesMetaData($entitiesMetaData, $command, $bundles);
+        $relatedEntities = array_merge($relatedEntities, $entitiesMetaData);
 
-        $eaTool = new EATool();
-        $eaTool->setParameters($this->eaToolParams);
-        $eaTool->initHelpers();
+        $eaTool = new EATool($this->parameters);
         $eaTool->setParameterBag($this->container->getParameterBag()->all());
-        $eaTool->initTranslation($this->eaToolParams['translation_domain'], $this->projectDir);
+        $eaTool->initTranslation($this->parameters['translation_domain'], $this->projectDir);
 
-        $entity = new Entity($entityMetaData);
-        $entity->setName(Entity::buildName($entityMetaData, $bundles));
-        $entity->setClass($entityMetaData->getName());
-        $entity->buildMethods($this->eaToolParams);
-        $eaTool->addEntity($entity);
-
-        //On rajoute les entités liées (les set avant avec les metaData)
+        foreach ($relatedEntities as $entityMetaData)
+        {
+            $entity = new Entity($entityMetaData);
+            $entity->setName(Entity::buildName(Entity::buildNameData($entityMetaData, $bundles)));
+            $entity->setClass($entityMetaData->getName());
+            $entity->buildMethods($this->parameters);
+            $eaTool->addEntity($entity);
+        }
 
         $eaTool->generateEntityFiles($this->projectDir, $this->consoleOutput);
-
-        $this->updateMenuFile($entity);
-        $this->updateImportsFile($entity);
+        $this->updateMenuFile($eaTool->getEntities());
+        $this->updateImportsFile($eaTool->getEntities());
     }
 
     /**
-     * @param Entity $entity
+     * @param ArrayCollection $entities
      * @throws EAException
      */
-    private function updateMenuFile(Entity $entity): void
+    private function updateMenuFile(ArrayCollection $entities): void
     {
-        $fileMenuContent = Yaml::parse(file_get_contents($this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '_menu.yml'));
+        $fileMenuContent = Yaml::parse(file_get_contents(sprintf( '%s/app/config/easyadmin/%s_menu.yml', $this->projectDir, $this->parameters['pattern_file'])));
 
         if (!isset($fileMenuContent['easy_admin']['design']['menu']))
         {
             throw new EAException('no easy admin menu detected');
         }
 
-        //Si le l'entité n'existe pas dans le menu
-        if (false === array_search($entity->getName(), array_column($fileMenuContent['easy_admin']['design']['menu'], 'entity')))
+        foreach ($entities as $entity)
         {
-            $fileMenuContent['easy_admin']['design']['menu'][] = EATool::buildEntryMenu($entity->getName());
+            //Si le l'entité n'existe pas dans le menu
+            if (false === array_search($entity->getName(), array_column($fileMenuContent['easy_admin']['design']['menu'], 'entity')))
+            {
+                $fileMenuContent['easy_admin']['design']['menu'][] = EATool::buildEntryMenu($entity->getName());
+            }
         }
 
-        $ymlContent = EATool::buildDumpPhpToYml($fileMenuContent, $this->eaToolParams);
-        file_put_contents($this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '_menu.yml', $ymlContent);
+        $ymlContent = EATool::buildDumpPhpToYml($fileMenuContent, $this->parameters);
+        file_put_contents($this->projectDir . '/app/config/easyadmin/' . $this->parameters['pattern_file'] . '_menu.yml', $ymlContent);
     }
 
     /**
-     * @param Entity $entity
+     * @param ArrayCollection $entities
      * @throws EAException
      */
-    private function updateImportsFile(Entity $entity): void
+    private function updateImportsFile(ArrayCollection $entities): void
     {
-        $fileMenuContent = Yaml::parse(file_get_contents($this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '.yml'));
+        $fileMenuContent = Yaml::parse(file_get_contents(sprintf( '%s/app/config/easyadmin/%s.yml', $this->projectDir, $this->parameters['pattern_file'])));
 
         if (!isset($fileMenuContent['imports']))
         {
             throw new EAException('There is no imports option in the configuration file.');
         }
 
-        $patternEntity = $this->eaToolParams['pattern_file'] . '_' . $entity->getName() . '.yml';
-
-        //Si le l'entité n'existe pas dans les fichiers
-        if (false === array_search($patternEntity, array_column($fileMenuContent['imports'], 'resource')))
+        foreach ($entities as $entity)
         {
-            $fileMenuContent['imports'][] = [
-                'resource' => $patternEntity,
-            ];
+            $patternEntity = $this->parameters['pattern_file'] . '_' . $entity->getName() . '.yml';
+
+            //Si le l'entité n'existe pas dans les fichiers
+            if (false === array_search($patternEntity, array_column($fileMenuContent['imports'], 'resource')))
+            {
+                $fileMenuContent['imports'][] = [
+                    'resource' => $patternEntity,
+                ];
+            }
         }
 
-        $ymlContent = EATool::buildDumpPhpToYml($fileMenuContent, $this->eaToolParams);
-        if (!file_put_contents($this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '.yml', $ymlContent))
-            throw new EAException('Can not update imported files in ' . $this->projectDir . '/app/config/easyadmin/' . $this->eaToolParams['pattern_file'] . '.yml');
+        $ymlContent = EATool::buildDumpPhpToYml($fileMenuContent, $this->parameters);
+        if (!file_put_contents(sprintf( '%s/app/config/easyadmin/%s.yml', $this->projectDir, $this->parameters['pattern_file']), $ymlContent))
+            throw new EAException(sprintf('Can not update imported files in %s/app/config/easyadmin/%s.yml', $this->projectDir, $this->parameters['pattern_file']));
     }
 
-    private function getRelatedEntitiesName($entityMetaData): array
+    private function getRelatedEntitiesMetaData(array $entitiesMetaData, Command $command, array $bundles): array
     {
         $listMetaData = $this->em->getMetadataFactory()->getAllMetadata();
-        $relatedEntities = [];
-        $input = new ArgvInput();
-        $helper = $this->command->getHelper('question');
+        $relatedEntities = [
+            'name' => [],
+            'metaData' => [],
+        ];
+        $consoleInput = new ArgvInput();
+        $consoleOutput = new ConsoleOutput();
+        $helper = $command->getHelper('question');
+
+        $entitiesName = array_map(function($entityMetaData) {
+            return $entityMetaData->getName();
+        }, $entitiesMetaData);
 
         foreach ($listMetaData as $metaData)
         {
@@ -146,17 +132,21 @@ class GeneratorEntity
 
             foreach ($metaData->associationMappings as $associationMapping)
             {
-                if ($associationMapping['targetEntity'] == $entityMetaData->name)
+                if (in_array($associationMapping['targetEntity'], $entitiesName))
                 {
-                    //Si déjà présent, on next
-                    if (in_array($associationMapping['targetEntity'], $relatedEntities))
+                    //Si déjà présent dans les entités liées, on next
+                    if (in_array($associationMapping['targetEntity'], $relatedEntities['name']))
                         continue ;
-                    $question = new ConfirmationQuestion('L\'entité <info>' . $metaData->name . '</info> est lié, voulez-vous (re)générer son fichier de configuration [<info>y</info>/n]?', true);
-                    if ($helper->ask($input, $this->consoleOutput, $question))
-                        $relatedEntities[] = $metaData->name;
+
+                    $question = new ConfirmationQuestion(sprintf('L\'entité <info>%s</info> est lié, voulez-vous (re)générer son fichier de configuration [<info>y</info>/n]?', $metaData->name), true);
+                    if ($helper->ask($consoleInput, $consoleOutput, $question))
+                    {
+                        $relatedEntities['name'][] = $metaData->getName();
+                        $relatedEntities['metaData'][] = $metaData;
+                    }
                 }
             }
         }
-        return $relatedEntities;
+        return $relatedEntities['metaData'];
     }
 }

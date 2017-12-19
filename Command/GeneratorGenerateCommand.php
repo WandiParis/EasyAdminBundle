@@ -36,12 +36,11 @@ class GeneratorGenerateCommand extends ContainerAwareCommand
     {
         $container = $this->getContainer();
         $dirProject = $container->getParameter('kernel.project_dir');
-        $eaToolParams = $container->getParameter('ea_tool');
+        $eaToolParams = $container->getParameter('wandi_easy_admin')['generator'];
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('A easy admin config file, <info>already exist</info>, do you want to <info>override</info> it [<info>y</info>/n]?', true);
 
         $cleanCommand = $this->getApplication()->find('wandi:easy-admin:generator:cleanup');
-        $greetInput = new ArrayInput([]);
 
         if (!$input->getOption('force')) {
             if (file_exists($dirProject . '/app/config/easyadmin/' . $eaToolParams['pattern_file'] . '.yml')) {
@@ -56,7 +55,7 @@ class GeneratorGenerateCommand extends ContainerAwareCommand
             else
                 $output->writeln('<error>Unable to create easyadmin folder, the build process is stopped</error>');
         } else
-            $cleanCommand->run($greetInput, $output);
+            $cleanCommand->run(new ArrayInput([]), $output);
 
         try {
             $eaTool = $container->get('wandi_easy_admin.generator.generate');

@@ -20,9 +20,11 @@ class EATool
     /**
      * EATool constructor.
      */
-    public function __construct()
+    public function __construct($parameters)
     {
         $this->entities = new ArrayCollection();
+        $this->parameters = $parameters;
+        $this->initHelpers();
     }
 
     /**
@@ -171,7 +173,7 @@ class EATool
             $ymlContent = self::buildDumpPhpToYml($entity->getStructure($this->parameters), $this->parameters);
             $path = '/app/config/easyadmin/' . $this->parameters['pattern_file'] . '_' . $entity->getName() . '.yml';
             $consoleOutput->writeln('Generating entity "<info>' . $entity->getName() . '</info>"');
-            self::createBackupFile($entity->getName(), $projectDir . $path, $consoleOutput);
+            $this->createBackupFile($entity->getName(), $projectDir . $path, $consoleOutput);
 
             if (file_put_contents($projectDir . $path, $ymlContent ))
                 $consoleOutput->writeln('  > generating <comment>' . $path . '</comment>');
@@ -256,7 +258,7 @@ class EATool
         ];
     }
 
-    public static function createBackupFile($fileName, $filePath, ConsoleOutput $consoleOutput)
+    public function createBackupFile($fileName, $filePath, ConsoleOutput $consoleOutput)
     {
         if (file_exists($filePath))
         {

@@ -59,7 +59,7 @@ class Entity
     {
         $entityShortName =(new \ReflectionClass($metaData->getName()))->getShortName();
 
-        if (0 === preg_match('#((.*?)(?:Bundle))\\\Entity\\\(?:' . $entityShortName . ')$#', $metaData->name, $match))
+        if (0 === preg_match('#((.*?)(?:Bundle))\\\Entity\\\(?:' . $entityShortName . ')$#', $metaData->getName(), $match))
         {
             throw new EAException('Unable to parse the bundle name');
         }
@@ -80,7 +80,7 @@ class Entity
                 ];
         }
 
-        throw new EAException('nom de bundle non trouvé');
+        throw new EAException('<comment>the entity bundle could not be found</comment>');
     }
 
     public static function buildName(array $nameData): string

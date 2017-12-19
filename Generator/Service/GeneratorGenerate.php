@@ -2,53 +2,34 @@
 
 namespace Wandi\EasyAdminBundle\Generator\Service;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Wandi\EasyAdminBundle\Generator\Entity;
 use Wandi\EasyAdminBundle\Generator\EATool;
+use Wandi\EasyAdminBundle\Generator\GeneratorConfigInterface;
 
-class GeneratorGenerate
+class GeneratorGenerate extends GeneratorBase implements GeneratorConfigInterface
 {
-    private $em;
-    private $projectDir;
-    private $eaToolParams;
     private $vichMappings;
-    private $container;
     private $consoleOutput;
 
-    /**
-     * GeneratorGenerate constructor.
-     * @param EntityManager $entityManager
-     * @param $eaToolParams
-     * @param $projectDir
-     * @param $vichMappings
-     * @param ContainerInterface $container
-     */
-    public function __construct(EntityManager $entityManager, array $eaToolParams, string $projectDir, array $vichMappings, ContainerInterface $container)
+    public function buildServiceConfig()
     {
-        $this->em = $entityManager;
-        $this->projectDir = $projectDir;
-        $this->eaToolParams = $eaToolParams;
-        $this->vichMappings = $vichMappings;
-        $this->container = $container;
+        $this->vichMappings = $this->container->getParameter('vich_uploader.mappings');
         $this->consoleOutput = new ConsoleOutput();
     }
 
     /**
-     * Génère les fichiers d'entités, le fichier menu et le fichier de base
+     * Génère les fichiers d'entités, le fichier du menu et le fichier de base
      * @throws \Wandi\EasyAdminBundle\Generator\Exception\EAException
      */
     public function run(): void
     {
         $listMetaData = $this->em->getMetadataFactory()->getAllMetadata();
 
-        $eaTool = new EATool();
-        $eaTool->setParameters($this->eaToolParams);
-        $eaTool->initHelpers();
+        $eaTool = new EATool($this->parameters);
         $eaTool->setParameterBag($this->container->getParameterBag()->all());
-        $eaTool->initTranslation($this->eaToolParams['translation_domain'], $this->projectDir);
+        $eaTool->initTranslation($this->parameters['translation_domain'], $this->projectDir);
         $bundles = $this->container->getParameter('kernel.bundles');
 
         if (empty($listMetaData))
@@ -60,7 +41,7 @@ class GeneratorGenerate
         foreach ($listMetaData as $metaData)
         {
             $nameData = Entity::buildNameData($metaData, $bundles);
-            if (in_array($nameData['bundle']."Bundle", $this->eaToolParams['bundles_filter']))
+            if (in_array($nameData['bundle']."Bundle", $this->parameters['bundles_filter']))
                 continue ;
 
             /** @var ClassMetadata $metaData */

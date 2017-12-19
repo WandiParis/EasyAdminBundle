@@ -19,10 +19,19 @@ class WandiEasyAdminExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
+        $configuration = new Configuration($this->getAlias());
         $config = $this->processConfiguration($configuration, $configs);
+        $container->setParameter('wandi_easy_admin', $config);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAlias()
+    {
+        return 'wandi_easy_admin';
     }
 }

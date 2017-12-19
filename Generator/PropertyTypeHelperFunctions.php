@@ -41,7 +41,7 @@ class PropertyTypeHelperFunctions
 
         if (!$param)
         {
-            throw new EaException('Can not find the parameter relative to the specified value (' . $mapping['uri_prefix'] . ')');
+            throw new EaException(sprintf('Can not find the parameter relative to the specified value (%s)', $mapping['uri_prefix']));
         }
 
         $field->setBasePath("%" . $param . "%");
