@@ -14,15 +14,16 @@
         {
             "name": "Jacques N. de Lamballerie",
             "email": "jndl@wandi.fr"
+        },
+        {
+            "name": "Laurent Fouquet",
+            "email": "laurent.fouquet@wandi.fr"
         }
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.5.0",
-        "javiereguiluz/easyadmin-bundle": "^1.16",
-        "vich/uploader-bundle": "^1.4",
-        "egeloen/ckeditor-bundle": "^6.0",
-        "ckfinder/ckfinder-symfony3-bundle": "^3.4"
+        "php": ">=7.1",
+        "javiereguiluz/easyadmin-bundle": "^1.17"
     },
     "require-dev": {
     },
