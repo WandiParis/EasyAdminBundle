@@ -2,28 +2,3 @@ services:
     wandi_easy_admin.form_authenticator:
         class: Wandi\EasyAdminBundle\Security\FormAuthenticator
         arguments: ['@doctrine.orm.entity_manager', '@security.password_encoder', '@router', '@request_stack', "@security.csrf.token_manager"]
-
-    wandi_easy_admin.generator.generate:
-        class: Wandi\EasyAdminBundle\Service\GeneratorGenerate
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '%ea_tool%'
-            - '%kernel.project_dir%'
-            - '%vich_uploader.mappings%'
-            - '@service_container'
-
-    wandi_easy_admin.generator.clean:
-        class: Wandi\EasyAdminBundle\Service\GeneratorClean
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '%ea_tool%'
-            - '%kernel.project_dir%'
-
-    wandi_easy_admin.generator.entity:
-        class: Wandi\EasyAdminBundle\Service\GeneratorEntity
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '%ea_tool%'
-            - '%kernel.project_dir%'
-            - '@service_container'
-            - '@console.command.appbundle_command_generatorentitycommand'
