@@ -1,10 +1,10 @@
 user:
     login:
         title: "Admin"
-        username: "Identifiant"
-        password: "Mot de passe"
-        remember_me: "Se souvenir de moi"
-        submit: "S'identifier"
+        username: "Username"
+        password: "Password"
+        remember_me: "Remember me"
+        submit: "Login"
 
 generator:
     image:
