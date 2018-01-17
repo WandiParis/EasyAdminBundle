@@ -29,14 +29,14 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(name="username", type="string", unique=true, length=64)
      */
     protected $username;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(name="password", type="string", length=255)
      */
     protected $password;
 

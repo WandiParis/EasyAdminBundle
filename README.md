@@ -106,10 +106,25 @@ $ php bin/console doctrine:schema:update -f
 
 It's a shortcut for download and install all the assets for CKEditor and CKFinder
  ```
- $ php bin/console wandi:easy-admin:setup
+ php bin/console wandi:easy-admin:setup
  ```
  
-* Create an admin user
+* Create an admin
  ```
- $ php bin/console wandi:easy-admin:create-user admin password
+ php bin/console wandi:easy-admin:user:create admin password
+ ```
+
+* Change admin password
+ ```
+ php bin/console wandi:easy-admin:user:change-password admin password2
+ ```
+
+* Enable an admin
+ ```
+ php bin/console wandi:easy-admin:user:enable admin
+ ```
+ 
+* Disable an admin
+ ```
+ php bin/console wandi:easy-admin:user:disable admin
  ```

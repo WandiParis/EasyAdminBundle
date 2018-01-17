@@ -1,10 +1,7 @@
 wandi_easy_admin_login:
     path: /login
     defaults:
-        _controller: WandiEasyAdminBundle:Security:login
-
-wandi_easy_admin_login_check:
-    path: /login_check
+        _controller: WandiEasyAdminBundle:Admin:login
 
 wandi_easy_admin_logout:
     path: /logout

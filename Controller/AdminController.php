@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wandi\EasyAdminBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
 
-class SecurityController extends Controller
+class AdminController extends BaseAdminController
 {
     /**
      * Login action.
@@ -15,6 +17,7 @@ class SecurityController extends Controller
     {
         $authenticationUtils = $this->get('security.authentication_utils');
         $error = $authenticationUtils->getLastAuthenticationError();
+
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render(
@@ -22,7 +25,7 @@ class SecurityController extends Controller
             [
                 'error' => $error,
                 'lastUsername' => $lastUsername,
-                'easyadminConfig' => $this->getParameter('easyadmin.config'),
+                'config' => $this->getParameter('easyadmin.config'),
             ]
         );
     }

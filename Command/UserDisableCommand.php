@@ -6,19 +6,19 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 use Wandi\EasyAdminBundle\Entity\User;
 
-class CreateUserCommand extends ContainerAwareCommand
+class UserDisableCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('wandi:easy-admin:create-user')
-            ->setDescription('Create an admin for Wandi/EasyAdminBundle')
+            ->setName('wandi:easy-admin:user:disable')
+            ->setDescription('Disable an admin')
             ->setDefinition(
                 [
                     new InputArgument('username', InputArgument::REQUIRED, 'The username'),
-                    new InputArgument('password', InputArgument::REQUIRED, 'The password'),
                 ]
             );
     }
@@ -27,17 +27,18 @@ class CreateUserCommand extends ContainerAwareCommand
     {
         $container = $this->getContainer();
         $em = $container->get('doctrine')->getManager();
-
+        
         $username = $input->getArgument('username');
-        $password = $input->getArgument('password');
 
-        $user = new User();
-        $user->setUsername($username)
-            ->setPassword($container->get('security.password_encoder')->encodePassword($user, $password));
+        /** @var User $user */
+        if($user = $em->getRepository(User::class)->findOneByUsername($username)){
+            $user->setEnabled(false);
 
-        $em->persist($user);
-        $em->flush();
+            $em->flush();
 
-        $output->writeln(sprintf('Created user <comment>%s</comment>', $username));
+            $output->writeln(sprintf('User <comment>%s</comment> disabled', $username));
+        } else{
+            $output->writeln(sprintf('<error>User %s was not found</error>', $username));
+        }
     }
 }

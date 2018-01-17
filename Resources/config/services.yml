@@ -1,4 +1,17 @@
 services:
-    wandi_easy_admin.form_authenticator:
-        class: Wandi\EasyAdminBundle\Security\FormAuthenticator
-        arguments: ['@doctrine.orm.entity_manager', '@security.password_encoder', '@router', '@request_stack', "@security.csrf.token_manager"]
+    wandi.easy_admin.command.user.create:
+        class: Wandi\EasyAdminBundle\Command\UserCreateCommand
+        tags:
+            -  { name: console.command, command: wandi:easy-admin:user:create }
+    wandi.easy_admin.command.user.change_password:
+        class: Wandi\EasyAdminBundle\Command\UserChangePasswordCommand
+        tags:
+            -  { name: console.command, command: wandi:easy-admin:user:change-password }
+    wandi.easy_admin.command.user.enable:
+        class: Wandi\EasyAdminBundle\Command\UserEnableCommand
+        tags:
+            -  { name: console.command, command: wandi:easy-admin:user:enable }
+    wandi.easy_admin.command.user.disable:
+        class: Wandi\EasyAdminBundle\Command\UserDisableCommand
+        tags:
+            -  { name: console.command, command: wandi:easy-admin:user:disable }
